@@ -69,6 +69,8 @@ CREATE TABLE ARTICULO(
     FOREIGN KEY(FK_USUARIO) REFERENCES USUARIO(ID)
 );
 
+USE Inventario;
+
 -- Insertar datos en tabla Usuario
 INSERT INTO USUARIO (ID, NAME, LastNamep, LastNamem, Rol, Tel, Email) VALUES
 	(1, 'Hector', 'Llanos', 'Banuelos', 'Admin', 5519941429, 'correo@hotmail.com'),
@@ -92,8 +94,8 @@ INSERT INTO CATEGORIA (ID, PRECIO, DESCR) VALUES
 
 -- Insertar datos en tabla Articulo
 INSERT INTO ARTICULO (ID, FK_PROVEEDOR, CODIGO, DESCR, COSTO, EXISTENCIA, FK_CATEGORIA, FK_USUARIO) VALUES
-	(1,2,0000000010, 'Gabinete para PC chica', 1200.00, 1, 2, 3),
-    (2,1,0000000011, 'Teclado con conexion USB C', 200.00, 0, 1, 2)
+	(3,2,0020000090, 'Gabinete para PC chica', 120.00, 1, 2, 3),
+    (4,1,0000020011, 'Teclado con conexion USB C', 900.00, 0, 1, 2);
  
 -- Insertar datos en tabla Entrada
 INSERT INTO ENTRADA (ID, FK_USUARIO, FECHA) VALUES
@@ -104,3 +106,53 @@ INSERT INTO ENTRADA (ID, FK_USUARIO, FECHA) VALUES
 INSERT INTO SALIDA (ID, FK_USUARIO, FECHA) VALUES
 	(1,1,'2022-12-25 10:01:19'),
     (2,3,'2022-12-26 12:15:59');
+    
+-- Vista para saber que usuario a registrado entradas de productos
+USE Inventario_Respaldo;
+SELECT * FROM USUARIO;
+
+CREATE VIEW vista_usuario_proIN AS
+SELECT NAME AS 'Usuarios que registran la Entrada de productos'
+FROM USUARIO
+RIGHT JOIN ENTRADA ON USUARIO.ID = ENTRADA.FK_USUARIO;
+
+SELECT * FROM vista_usuario_proIN;
+
+-- Vista para saber que usuario a registrado entradas de productos
+USE Inventario_Respaldo;
+SELECT * FROM USUARIO;
+
+CREATE VIEW vista_usuario_proOUT AS
+SELECT NAME AS 'Usuarios que registran la Salida de productos'
+FROM USUARIO
+RIGHT JOIN SALIDA ON USUARIO.ID = SALIDA.FK_USUARIO;
+
+SELECT * FROM vista_usuario_proOUT;
+
+-- Vista para saber cuantos productos hay en existencia
+CREATE VIEW vista_productos_total as
+	SELECT COUNT(ARTICULO.ID) FROM ARTICULO WHERE ARTICULO.EXISTENCIA = 1;
+SELECT * FROM vista_productos_total;
+
+-- Vista proveedor producto
+CREATE VIEW vista_proveedor_producto as
+	SELECT PROVEEDOR.NAME, ARTICULO.DESCR
+    FROM PROVEEDOR
+    RIGHT JOIN ARTICULO ON PROVEEDOR.ID = ARTICULO.FK_PROVEEDOR;
+SELECT * FROM vista_proveedor_producto;
+
+-- Usuarios que no tengan el rol de administrador
+CREATE VIEW vista_usuarios_noAdmin as
+	SELECT COUNT(USUARIO.ID) FROM USUARIO WHERE USUARIO.Rol = 'Usuario';
+SELECT * FROM vista_usuarios_noAdmin;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
